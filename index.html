@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Aesthetic Memories | Birthday Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;500&display=swap');
+
+        body {
+            margin: 0; padding: 0;
+            background: #fdfaf5; /* Creamy Aesthetic Background */
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            font-family: 'Montserrat', sans-serif; overflow: hidden;
+        }
+
+        #app-container { width: 90%; max-width: 340px; }
+
+        /* --- Polaroid Styling --- */
+        .polaroid {
+            background: white;
+            padding: 15px 15px 50px 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            text-align: center;
+            transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        /* Unique Tilts for each card to look like real photos */
+        .tilt-1 { transform: rotate(-3deg); }
+        .tilt-2 { transform: rotate(3deg); }
+        .tilt-3 { transform: rotate(-1deg); }
+        .tilt-4 { transform: rotate(4deg) translateY(-10px); }
+
+        .photo-area {
+            width: 100%;
+            height: 280px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 60px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+            border-radius: 2px;
+        }
+
+        /* --- Elegant Typing --- */
+        .typing-area {
+            font-family: 'Dancing Script', cursive;
+            font-size: 22px;
+            color: #444;
+            min-height: 80px;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+
+        /* --- Minimal Buttons --- */
+        .btn-wrapper { 
+            display: flex; flex-direction: column; gap: 10px; 
+            opacity: 0; transition: 1s ease;
+        }
+        .btn {
+            background: none; border: 1px solid #ddd;
+            color: #777; padding: 10px; font-size: 13px;
+            text-transform: uppercase; letter-spacing: 2px;
+            cursor: pointer; transition: 0.3s;
+            border-radius: 2px;
+        }
+        .btn:hover { border-color: #333; color: #333; background: #fafafa; }
+
+        /* --- Final Results Sheet --- */
+        .scrapbook {
+            text-align: left; font-size: 12px; max-height: 400px;
+            overflow-y: auto; padding: 15px; background: #fff;
+            border-top: 1px solid #eee; margin-top: 10px;
+        }
+        .scrapbook b { color: #8a735b; }
+
+        /* --- Floating Sparkles --- */
+        .sparkle {
+            position: absolute; width: 10px; height: 10px;
+            background: #d4af37; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            animation: twinkle 2s infinite;
+        }
+        @keyframes twinkle { 0%, 100% { transform: scale(0); opacity: 0; } 50% { transform: scale(1); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <div id="card" class="polaroid tilt-1">
+            <div id="photo" class="photo-area">📸</div>
+            <div id="typing-area" class="typing-area"></div>
+            <div id="btn-wrapper" class="btn-wrapper"></div>
+        </div>
+    </div>
+
+    <script>
+        const journey = [
+            { q: "A pure soul was born today... is it you? ✨", a: ["Yes, it's me 🙈", "Maybe.. 😉"], icon: "👼" },
+            { q: "Your smile is my favorite piece of art. Agree?", a: ["Always ❤️", "You're too kind"], icon: "🖼️" },
+            { q: "If memories were stars, you'd be my whole sky. ✨", a: ["Aww.. ☁️", "Keep talking! 🫦"], icon: "🌌" },
+            { q: "Why are you so effortlessly beautiful? It's unfair.", a: ["Blushing now..", "It's a secret! 🤫"], icon: "🌸" },
+            { q: "Can I keep you in my gallery forever?", a: ["Yes, please! ❤️", "Only if you're lucky"], icon: "🎞️" },
+            { q: "You look like a dream I never want to wake up from.", a: ["Stay with me 🌙", "Sweetest thing ever"], icon: "💭" },
+            { q: "Is the cake sweeter, or is it just your vibe?", a: ["Definitely me 💋", "The cake! 😂"], icon: "🍰" },
+            { q: "Let's make this year purely aesthetic and happy.", a: ["Let's do it! ✨", "Count me in!"], icon: "🥂" },
+            { q: "Are you ready to see your birthday surprise?", a: ["I'm ready 😍", "Show me!"], icon: "🎁" },
+            { q: "Close your eyes... 3.. 2.. 1.. Happy Birthday!", a: ["Open! 🎉", "Love ❤️"], icon: "🎂" }
+        ];
+
+        let step = 0; let scrapbookData = [];
+
+        function typeEffect(text, cb) {
+            const area = document.getElementById('typing-area');
+            const wrapper = document.getElementById('btn-wrapper');
+            area.innerHTML = ""; wrapper.style.opacity = "0";
+            
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    area.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                } else {
+                    wrapper.style.opacity = "1";
+                    if(cb) cb();
+                }
+            }
+            type();
+        }
+
+        function loadStep() {
+            const card = document.getElementById('card');
+            const photo = document.getElementById('photo');
+            const wrapper = document.getElementById('btn-wrapper');
+            
+            // Random Tilt & Icon
+            const tilts = ["tilt-1", "tilt-2", "tilt-3", "tilt-4"];
+            card.className = "polaroid " + tilts[Math.floor(Math.random() * tilts.length)];
+            photo.innerHTML = journey[step].icon;
+
+            wrapper.innerHTML = "";
+            typeEffect(journey[step].q, () => {
+                journey[step].a.forEach(ans => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn"; btn.innerText = ans;
+                    btn.onclick = () => {
+                        scrapbookData.push({q: journey[step].q, a: ans});
+                        createSparkle();
+                        step++;
+                        if (step < journey.length) loadStep();
+                        else showFinal();
+                    };
+                    wrapper.appendChild(btn);
+                });
+            });
+        }
+
+        function showFinal() {
+            const card = document.getElementById('card');
+            card.innerHTML = `
+                <div class="photo-area">🎂✨</div>
+                <div style="font-family:'Dancing Script'; font-size:32px; color:#333;">Happy Birthday!</div>
+                <p style="font-size:12px; color:#999; letter-spacing:1px;">YOU ARE TIMELESS. ❤️</p>
+                <button class="btn" style="width:100%; border-color:#333; color:#333;" onclick="showScrapbook()">View Scrapbook 📖</button>
+            `;
+        }
+
+        function showScrapbook() {
+            const card = document.getElementById('card');
+            let html = `<div style="font-size:11px; color:#aaa; margin-bottom:10px;">📸 BIRTHDAY MEMORIES</div><div class="scrapbook">`;
+            scrapbookData.forEach((item, i) => {
+                html += `<b>${i+1}.</b> ${item.q}<br><span style="color:#999">— ${item.a}</span><br><br>`;
+            });
+            html += `</div><button class="btn" style="width:100%; margin-top:10px;" onclick="location.reload()">Re-live 🔄</button>`;
+            card.innerHTML = html;
+        }
+
+        function createSparkle() {
+            for(let i=0; i<5; i++) {
+                const s = document.createElement('div');
+                s.className = 'sparkle';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.top = Math.random() * 100 + 'vh';
+                document.body.appendChild(s);
+                setTimeout(() => s.remove(), 2000);
+            }
+        }
+
+        loadStep();
+    </script>
+</body>
+</html>
